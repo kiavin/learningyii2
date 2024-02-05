@@ -38,7 +38,7 @@ class Teachers extends \yii\base\Module
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'create', 'update', 'delete', 'view', 'students', 'allstudents'],
+                        'actions' => ['logout', 'index', 'create', 'update', 'delete', 'view', 'students', 'allstudents', 'studentsearch'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

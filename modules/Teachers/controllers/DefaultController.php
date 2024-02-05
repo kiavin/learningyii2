@@ -9,14 +9,15 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\db\Expression;
 use Yii;
+use yii\app\Flash;
 
 /**
  * Default controller for the `Teachers` module
  */
 class DefaultController extends Controller
 {
-    
-    
+
+
     /**
      * {@inheritdoc}
      */
@@ -47,7 +48,7 @@ class DefaultController extends Controller
             return $this->goBack();
         }
 
-        $model->password = '';              
+        $model->password = '';
 
         return $this->render('login', [
             'model' => $model,
@@ -65,7 +66,7 @@ class DefaultController extends Controller
             'dataProvider' => new \yii\data\ActiveDataProvider([
                 'query' => \app\modules\Teachers\models\Teachers::find(),
             ]),
-        
+
         ]);
     }
 
@@ -89,32 +90,52 @@ class DefaultController extends Controller
      */
     public function actionCreate()
     {
-        if(yii::$app->user->can('create-Teachers')){
-        $model = new Teachers();
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                //get the instance of the uploaded file
-                $model->generateEmailVerificationToken();
-                $model->generateAuthKey();
-                $model->created_at = new Expression('NOW()');
-                $model->updated_at = new Expression('NOW()');
-                if ($model->save()) {
-                    //send email to verify email
-                    
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
+        if (yii::$app->user->can('create-Teachers')) {
+            $model = new Teachers();
+            if ($this->request->isPost) {
+                if ($model->load($this->request->post())) {
+                    //get the instance of the uploaded file
+                    $imageName = $model->username;
+                    $model->user_img = \yii\web\UploadedFile::getInstance($model, 'user_img');
+                    if ($model->user_img instanceof \yii\web\UploadedFile) {
+                        // Get the original file name
+                        $originalFileName = $model->user_img->baseName;
+                        // Get the file extension
+                        $extension = $model->user_img->extension;
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }else{
-        throw new \yii\web\ForbiddenHttpException('You are not allowed to perform this action.');
+                        // Concatenate the username and extension to form the new file name
+                        $newFileName = $imageName . '.' . $extension;
+
+                        // Save the uploaded file with the new file name
+                        $model->user_img->saveAs('uploads/' . $newFileName);
+
+                        // Update the user_img attribute with the new file name for database storage
+                        $model->user_img = $newFileName;
+                    } else {
+                        $model->user_img = 'uploads/default.png';
+                    }
+                    $model->generateEmailVerificationToken();
+                    $model->generateAuthKey();
+                    $model->created_at = new Expression('NOW()');
+                    $model->updated_at = new Expression('NOW()');
+                    if ($model->save()) {
+                        //send email to verify email
+
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    }
+                }
+            } else {
+                $model->loadDefaultValues();
+            }
+
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        } else {
+            Yii::$app->session->setFlash('error', 'You are not allowed to perform this action');
+            return $this->goBack();
+        }
     }
-}
 
     /**
      * Updates an existing Teachers model.
@@ -136,7 +157,7 @@ class DefaultController extends Controller
         ]);
     }
 
-    
+
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
@@ -174,6 +195,11 @@ class DefaultController extends Controller
     }
 
     public function actionAllstudents()
+    {
+        return $this->redirect(['/Students/default/index']);
+    }
+
+    public function actionStudentsearch()
     {
         return $this->redirect(['/Students/default/index']);
     }

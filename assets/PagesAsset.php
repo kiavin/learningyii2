@@ -25,6 +25,8 @@ class PagesAsset extends AssetBundle
         'css/bootstrap.css',
         'css/style.css',
         'css/style-mob.css',
+        
+
     ];
     public $js = [
         'js/materialize.min.js',

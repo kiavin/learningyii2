@@ -18,7 +18,7 @@ class Teacherssearch extends Teachers
     {
         return [
             [['id', 'status', 'created_at', 'updated_at', 'phone'], 'integer'],
-            [['name', 'email', 'password_hash', 'authkey', 'password_reset_token', 'accessToken', 'user_img'], 'safe'],
+            [['username', 'email', 'password_hash', 'authkey', 'password_reset_token', 'accessToken', 'user_img'], 'safe'],
         ];
     }
 

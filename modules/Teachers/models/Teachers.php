@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\web\IdentityInterface;
 use yii\base\NotSupportedException;
+use kartik\password\StrengthValidator;
 use yii\db\ActiveRecord;
 
 
@@ -38,17 +39,20 @@ class Teachers extends \yii\db\ActiveRecord  implements IdentityInterface
     /**
      * {@inheritdoc}
      */
+
+    
     public function rules()
     {
         return [
             [['username', 'email', 'password_hash', 'accessToken', 'phone'], 'required'],
-            [[ 'phone'], 'integer'],
+            [['phone'], 'integer'],
             [['username'], 'string', 'max' => 30],
             [['email', 'authkey'], 'string', 'max' => 50],
             [['password_hash'], 'string', 'max' => 100],
+            [['password_hash'], StrengthValidator::class, 'preset'=>'normal', 'userAttribute'=>'username'],
             [['password_reset_token'], 'string', 'max' => 100],
             [['accessToken'], 'string', 'max' => 100],
-            [['user_img'], 'string', 'max' => 255],
+            [['user_img'], 'file'],
             [['email'], 'unique'],
             [['username', 'email'], 'unique', 'targetAttribute' => ['username', 'email']],
             [['phone'], 'unique'],

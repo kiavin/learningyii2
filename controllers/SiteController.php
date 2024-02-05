@@ -240,4 +240,10 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
+    public function actionCalendar()
+    {
+        $this->layout = 'homepage';
+        return $this->render('calendar');
+    }
+
 }

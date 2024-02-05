@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\password\PasswordInput;
 
 /** @var yii\web\View $this */
 /** @var app\modules\Teachers\models\Teachers $model */
@@ -16,9 +17,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'password_hash')->textInput(['maxlength' => true]) ?>
-
-    
+    <?= $form->field($model, 'password_hash')->widget(PasswordInput::class,
+[
+    'pluginOptions' => [
+        'showMeter' => true,
+        'toggleMask' => false
+    ]]); ?>
 
     <?= $form->field($model, 'phone')->textInput() ?>
 
